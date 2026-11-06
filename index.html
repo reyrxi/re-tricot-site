@@ -160,7 +160,50 @@
   .btn-ghost:hover{ border-color:var(--ink); transform:translateY(-2px); }
   .btn svg{ width:16px; height:16px; flex:none; }
 
-  .burger{ display:none; }
+  .burger{
+    display:none;
+    flex-direction:column; align-items:center; justify-content:center;
+    gap:5px;
+    width:44px; height:44px;
+    border:none; background:transparent;
+    cursor:pointer; padding:8px;
+    flex:none;
+  }
+  .burger span{
+    display:block; width:22px; height:2px;
+    background:var(--ink); border-radius:2px;
+    transition:transform .3s ease, opacity .25s ease;
+  }
+  .burger[aria-expanded="true"] span:nth-child(1){ transform:translateY(7px) rotate(45deg); }
+  .burger[aria-expanded="true"] span:nth-child(2){ opacity:0; }
+  .burger[aria-expanded="true"] span:nth-child(3){ transform:translateY(-7px) rotate(-45deg); }
+
+  .mobile-drawer{
+    position:fixed; inset:0; z-index:200;
+    background:var(--ivory);
+    display:flex; flex-direction:column;
+    align-items:center; justify-content:center;
+    gap:30px;
+    transform:translateX(100%);
+    transition:transform .35s cubic-bezier(.4,0,.2,1);
+    visibility:hidden;
+  }
+  .mobile-drawer.open{ transform:translateX(0); visibility:visible; }
+  .mobile-drawer ul{
+    list-style:none; padding:0; margin:0;
+    display:flex; flex-direction:column; align-items:center; gap:26px;
+  }
+  .mobile-drawer ul a{
+    font-family:var(--font-display); font-size:1.5rem; font-weight:600;
+    color:var(--ink); padding:6px 10px;
+  }
+  .drawer-close{
+    position:absolute; top:18px; right:22px;
+    width:44px; height:44px;
+    border:none; background:transparent; cursor:pointer;
+    font-size:1.6rem; line-height:1; color:var(--ink);
+  }
+  body.no-scroll{ overflow:hidden; }
 
   /* ---------- hero ---------- */
   .hero{
@@ -518,23 +561,39 @@
   }
 
   @media (max-width: 920px){
-    .nav ul, .hero-meta{ display:none; }
-    .hero{ grid-template-columns:1fr; padding-top:50px; }
+    .nav ul{ display:none; }
+    .burger{ display:flex; }
+    .hero-meta{ display:flex; }
+    .nav{ padding:14px 18px; }
+    .btn{ padding:11px 16px; font-size:0.82rem; }
+    .nav-links .btn-primary{ display:none; }
+    .hero{ grid-template-columns:1fr; padding:40px 20px 50px; }
     .hero-visual{ order:-1; max-width:320px; margin:0 auto; }
+    .hero-ctas{ flex-direction:column; align-items:stretch; }
+    .hero-ctas .btn{ justify-content:center; }
     .about-grid{ grid-template-columns:1fr; }
-    .cat-grid{ grid-template-columns:repeat(2,1fr); }
-    .piece-grid{ grid-template-columns:repeat(2,1fr); }
+    .cat-grid{ grid-template-columns:repeat(2,1fr); gap:16px; }
+    .piece-grid{ grid-template-columns:repeat(2,1fr); gap:16px; }
     .value-grid{ grid-template-columns:repeat(2,1fr); }
     .gallery-grid{ grid-template-columns:repeat(2,1fr); grid-auto-rows:130px; }
     .how-grid{ grid-template-columns:1fr; gap:46px; }
     .how-rail{ display:none; }
     .cta{ flex-direction:column; text-align:center; padding:46px 28px; }
     .foot-grid{ grid-template-columns:1fr; gap:30px; }
+    section{ padding-left:20px; padding-right:20px; }
   }
   @media (max-width: 560px){
     .cat-grid, .piece-grid, .value-grid{ grid-template-columns:1fr; }
-    .gallery-grid{ grid-template-columns:1fr 1fr; }
+    .gallery-grid{ grid-template-columns:1fr 1fr; grid-auto-rows:150px; }
     .hero-badge{ display:none; }
+    h1{ font-size:2.1rem; line-height:1.2; }
+    .brand{ font-size:1.1rem; }
+    .brand small{ font-size:0.52rem; }
+    .float-wa{ width:54px; height:54px; right:16px; bottom:16px; }
+    .float-wa svg{ width:24px; height:24px; }
+  }
+  @media (max-width: 380px){
+    .cat-grid, .piece-grid{ gap:12px; }
   }
 </style>
 </head>
@@ -568,9 +627,27 @@
         <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.87.5 3.63 1.44 5.15L2 22l5.1-1.53a9.87 9.87 0 004.94 1.33h.01c5.46 0 9.91-4.45 9.91-9.91C21.96 6.45 17.5 2 12.04 2zm5.8 14.08c-.24.68-1.4 1.3-1.93 1.37-.49.07-1.1.1-1.78-.11-.41-.13-.93-.3-1.6-.6-2.81-1.22-4.64-4.04-4.78-4.23-.14-.19-1.14-1.52-1.14-2.9 0-1.37.72-2.04.98-2.32.26-.28.56-.34.75-.34.19 0 .38 0 .54.01.17.01.41-.06.64.5.24.57.81 1.98.88 2.12.07.14.11.3.02.49-.09.19-.14.3-.27.47-.14.16-.29.37-.41.49-.14.14-.28.29-.12.56.16.28.72 1.19 1.55 1.93 1.06.95 1.96 1.25 2.24 1.39.28.14.44.12.6-.07.17-.19.71-.83.9-1.11.19-.28.38-.23.63-.14.26.09 1.65.78 1.93.92.28.14.47.21.54.33.07.12.07.68-.17 1.36z"/></svg>
         Chamar no WhatsApp
       </a>
+      <button class="burger" id="burgerBtn" aria-label="Abrir menu" aria-expanded="false" aria-controls="mobileDrawer">
+        <span></span><span></span><span></span>
+      </button>
     </div>
   </div>
 </header>
+
+<div class="mobile-drawer" id="mobileDrawer">
+  <button class="drawer-close" id="drawerClose" aria-label="Fechar menu">✕</button>
+  <ul>
+    <li><a href="#sobre">Sobre</a></li>
+    <li><a href="#colecoes">Coleções</a></li>
+    <li><a href="#destaques">Destaques</a></li>
+    <li><a href="#como-funciona">Como comprar</a></li>
+    <li><a href="#contato">Contato</a></li>
+  </ul>
+  <a class="btn btn-primary" href="https://wa.me/5521971970850" target="_blank" rel="noopener">
+    <svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.87.5 3.63 1.44 5.15L2 22l5.1-1.53a9.87 9.87 0 004.94 1.33h.01c5.46 0 9.91-4.45 9.91-9.91C21.96 6.45 17.5 2 12.04 2zm5.8 14.08c-.24.68-1.4 1.3-1.93 1.37-.49.07-1.1.1-1.78-.11-.41-.13-.93-.3-1.6-.6-2.81-1.22-4.64-4.04-4.78-4.23-.14-.19-1.14-1.52-1.14-2.9 0-1.37.72-2.04.98-2.32.26-.28.56-.34.75-.34.19 0 .38 0 .54.01.17.01.41-.06.64.5.24.57.81 1.98.88 2.12.07.14.11.3.02.49-.09.19-.14.3-.27.47-.14.16-.29.37-.41.49-.14.14-.28.29-.12.56.16.28.72 1.19 1.55 1.93 1.06.95 1.96 1.25 2.24 1.39.28.14.44.12.6-.07.17-.19.71-.83.9-1.11.19-.28.38-.23.63-.14.26.09 1.65.78 1.93.92.28.14.47.21.54.33.07.12.07.68-.17 1.36z"/></svg>
+    Chamar no WhatsApp
+  </a>
+</div>
 
 <!-- ================= HERO ================= -->
 <section class="hero">
@@ -814,7 +891,7 @@
           <h3>Echarpe bordada</h3>
           <div class="sizes">Toque de cashmere · tamanho único</div>
           <div class="piece-foot">
-            <div class="price">R$ 69,00<span>à vista</span></div>
+            <div class="price">R$ 89,00<span>à vista</span></div>
             <a class="mini-ask" href="https://wa.me/5521971970850" target="_blank" rel="noopener">Perguntar</a>
           </div>
         </div>
@@ -984,6 +1061,29 @@
   document.querySelectorAll('.cat-grid .reveal, .piece-grid .reveal, .value-grid .reveal, .how-grid .reveal, .gallery-grid .reveal').forEach((el,i)=>{
     el.style.transitionDelay = (i%4)*0.08 + 's';
   });
+
+  // mobile nav drawer
+  const burgerBtn = document.getElementById('burgerBtn');
+  const drawerClose = document.getElementById('drawerClose');
+  const drawer = document.getElementById('mobileDrawer');
+  function openDrawer(){
+    drawer.classList.add('open');
+    burgerBtn.setAttribute('aria-expanded','true');
+    document.body.classList.add('no-scroll');
+  }
+  function closeDrawer(){
+    drawer.classList.remove('open');
+    burgerBtn.setAttribute('aria-expanded','false');
+    document.body.classList.remove('no-scroll');
+  }
+  if(burgerBtn){
+    burgerBtn.addEventListener('click', ()=>{
+      drawer.classList.contains('open') ? closeDrawer() : openDrawer();
+    });
+    drawerClose.addEventListener('click', closeDrawer);
+    drawer.querySelectorAll('a').forEach(a=> a.addEventListener('click', closeDrawer));
+    window.addEventListener('resize', ()=>{ if(window.innerWidth > 920) closeDrawer(); });
+  }
 </script>
 
 </body>
